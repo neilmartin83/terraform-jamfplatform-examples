@@ -1,0 +1,56 @@
+name: "Terraform Plan (PR)"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    env:
+      TF_CLI_ARGS_plan: "-compact-warnings"
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Cache State
+        uses: actions/cache@v4
+        with:
+          path: |
+            terraform.tfstate
+            terraform.tfstate.backup
+            .terraform/
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf', '**/*.tfvars') }}
+          restore-keys: |
+            ${{ runner.os }}-terraform-
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.3"
+          terraform_wrapper: false
+
+      - name: Init
+        id: init
+        run: terraform init
+
+      - name: Validate
+        run: terraform validate
+
+      - name: Plan
+        id: plan
+        env:
+          TF_VAR_jamfplatform_base_url: ${{ vars.JAMFPLATFORM_BASE_URL }}
+          TF_VAR_jamfplatform_client_id: ${{ secrets.jamfplatform_client_id }}
+          TF_VAR_jamfplatform_client_secret: ${{ secrets.jamfplatform_client_secret }}
+          TF_VAR_jamfpro_instance_fqdn: ${{ vars.JAMFPRO_INSTANCE_FQDN }}
+          TF_VAR_jamfpro_auth_method: ${{ vars.JAMFPRO_AUTH_METHOD }}
+          TF_VAR_jamfpro_client_id: ${{ secrets.jamfpro_client_id }}
+          TF_VAR_jamfpro_client_secret: ${{ secrets.jamfpro_client_secret }}
+        run: terraform plan

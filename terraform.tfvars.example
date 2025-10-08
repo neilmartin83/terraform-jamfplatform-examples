@@ -1,0 +1,12 @@
+# Jamf Platform API Configuration
+# Get these credentials from your Jamf Platform organization settings
+jamfplatform_base_url      = "https://us.apigw.jamf.com"  # or eu.apigw.jamf.com for EU, apac.apigw.jamf.com for APAC
+jamfplatform_client_id     = "your-jamfplatform-client-id"
+jamfplatform_client_secret = "your-jamfplatform-client-secret"
+
+# Jamf Pro API Configuration  
+# These are used for creating and managing Jamf Pro groups and getting their Platform IDs
+jamfpro_instance_fqdn      = "https://yourcompany.jamfcloud.com"
+jamfpro_auth_method        = "oauth2"  # Options: "oauth2" (recommended) or "basic"
+jamfpro_client_id          = "your-jamfpro-client-id"
+jamfpro_client_secret      = "your-jamfpro-client-secret"

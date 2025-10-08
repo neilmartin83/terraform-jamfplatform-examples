@@ -1,0 +1,42 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Terraform variable files
+*.tfvars
+*.tfvars.json
+
+# Terraform plan files
+*.tfplan
+
+# Local .terraform directories
+.terraform/
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+.terraform.d/
+
+# Sensitive files
+.terraform.lock.hcl
+
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Ignore local provider builds
+.terraform.d/plugins/
+
+# Ignore OpenTofu cache
+.tofu/
