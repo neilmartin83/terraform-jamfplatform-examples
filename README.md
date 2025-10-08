@@ -189,7 +189,7 @@ This repository uses two Terraform providers:
 - **Purpose**: Manage Jamf Platform resources like compliance benchmarks and blueprints
 - **Version**: 0.1.2
 - **Authentication**: OAuth2 client credentials
-- **Documentation**: [Terraform Registry](https://registry.terraform.io/providers/Jamf-Concepts/jamfplatform)
+- **Documentation**: [Terraform Registry](https://registry.terraform.io/providers/Jamf-Concepts/jamfplatform/latest/docs)
 
 **Key Resources:**
 
