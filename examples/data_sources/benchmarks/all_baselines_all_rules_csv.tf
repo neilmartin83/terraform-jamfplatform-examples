@@ -3,13 +3,6 @@ data "jamfplatform_cbengine_baselines" "all" {}
 
 data "jamfplatform_cbengine_rules" "all" {
   for_each    = { for b in data.jamfplatform_cbengine_baselines.all.baselines : b.id => b if b.id != "" }
-  baseline_id = each.value.baseline_id
-}
-
-data "jamfplatform_cbengine_baselines" "all" {}
-
-data "jamfplatform_cbengine_rules" "all" {
-  for_each    = { for b in data.jamfplatform_cbengine_baselines.all.baselines : b.id => b if b.id != "" }
   baseline_id = each.value.id
 }
 
