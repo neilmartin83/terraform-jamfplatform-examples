@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "software_update_settings" {
   name        = "Software Update Settings"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   software_update_settings {
     allow_standard_user_os_updates           = true
@@ -20,7 +20,6 @@ resource "jamfplatform_blueprints_blueprint" "software_update_settings" {
     rapid_security_response_rollback_enabled = false
     recommended_cadence                      = "Newest"
 
-    # Beta offer programs
     beta_offer_programs {
       token       = "beta-token-1"
       description = "iOS 18 Beta Program"

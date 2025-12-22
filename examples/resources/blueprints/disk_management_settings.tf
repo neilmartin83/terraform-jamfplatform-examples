@@ -3,10 +3,10 @@ resource "jamfplatform_blueprints_blueprint" "disk_management" {
   name        = "Disk Management"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   disk_management_settings {
-    external_storage = "ReadOnly" # No version needed!
+    external_storage = "ReadOnly"
     network_storage  = "Disallowed"
   }
 }

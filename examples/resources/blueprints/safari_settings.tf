@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "safari_settings" {
   name        = "Safari Settings"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   safari_settings {
     accept_cookies                  = "VisitedWebsites"

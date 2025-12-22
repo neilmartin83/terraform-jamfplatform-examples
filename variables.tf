@@ -15,27 +15,3 @@ variable "jamfplatform_client_secret" {
   sensitive   = true
   default     = ""
 }
-
-variable "jamfpro_instance_fqdn" {
-  description = "The Jamf Pro FQDN (fully qualified domain name). Example: https://mycompany.jamfcloud.com"
-  sensitive   = true
-  default     = ""
-}
-
-variable "jamfpro_auth_method" {
-  description = "The auth method chosen for interacting with Jamf Pro. Options are 'basic' for username/password or 'oauth2' for client id/secret."
-  sensitive   = true
-  default     = ""
-}
-
-variable "jamfpro_client_id" {
-  description = "The Jamf Pro Client ID for authentication when auth_method is 'oauth2'."
-  sensitive   = true
-  default     = ""
-}
-
-variable "jamfpro_client_secret" {
-  description = "The Jamf Pro Client secret for authentication when auth_method is 'oauth2'."
-  sensitive   = true
-  default     = ""
-}

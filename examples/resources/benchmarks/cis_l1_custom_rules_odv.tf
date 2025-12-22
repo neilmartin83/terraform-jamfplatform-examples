@@ -26,6 +26,6 @@ resource "jamfplatform_cbengine_benchmark" "custom_cis_lvl1" {
       enabled = true
     }
   ]
-  target_device_group = data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id
+  target_device_group = jamfplatform_device_group.demo_computer_group.id
   enforcement_mode    = "MONITOR_AND_ENFORCE"
 }

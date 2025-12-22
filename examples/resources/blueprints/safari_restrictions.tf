@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "legacy_payload_restrictions_safari
   name        = "Restrictions - Safari"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   legacy_payloads = jsonencode([
     {

@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "math_settings" {
   name        = "Math Settings"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   math_settings {
     calculator_basic_mode_add_square_root  = true

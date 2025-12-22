@@ -4,11 +4,3 @@ provider "jamfplatform" {
   client_id     = var.jamfplatform_client_id
   client_secret = var.jamfplatform_client_secret
 }
-
-# jamfpro provider configuration
-provider "jamfpro" {
-  jamfpro_instance_fqdn = var.jamfpro_instance_fqdn
-  auth_method           = var.jamfpro_auth_method
-  client_id             = var.jamfpro_client_id
-  client_secret         = var.jamfpro_client_secret
-}

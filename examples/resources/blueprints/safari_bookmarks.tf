@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "safari_bookmarks" {
   name        = "Safari Bookmarks"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   safari_bookmarks {
     managed_bookmarks {

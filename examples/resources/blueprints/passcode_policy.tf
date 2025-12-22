@@ -3,7 +3,7 @@ resource "jamfplatform_blueprints_blueprint" "passcode_policy" {
   name        = "Passcode Policy"
   description = "Managed by Terraform"
 
-  device_groups = [data.jamfpro_group.jamfplatform_demo_target_group.group_platform_id]
+  device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   passcode_policy {
     change_at_next_auth              = true

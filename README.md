@@ -15,7 +15,7 @@ Example Terraform configurations demonstrating how to use the Jamf Platform Terr
 
    ```bash
    cp terraform.tfvars.example terraform.tfvars
-   # Edit terraform.tfvars with your actual values
+   # Edit terraform.tfvars with your Jamf Platform API credentials
    ```
 
 3. **Browse example configurations**
@@ -35,7 +35,7 @@ Example Terraform configurations demonstrating how to use the Jamf Platform Terr
 
 ### Authentication
 
-This repository uses local `terraform.tfvars` file for authentication. You need to create your own `terraform.tfvars` file with your credentials.
+This repository uses a local `terraform.tfvars` file for authentication. You need to create your own `terraform.tfvars` file with your Jamf Platform API credentials.
 
 **Required Variables:**
 
@@ -43,46 +43,43 @@ Create a `terraform.tfvars` file in the root directory:
 
 ```hcl
 # Jamf Platform API Configuration
-jamfplatform_base_url     = "https://us.apigw.jamf.com"  # or eu/apac
-jamfplatform_client_id    = "your-jamfplatform-client-id"
-jamfplatform_client_secret= "your-jamfplatform-client-secret"
-
-# Jamf Pro API Configuration (for group management)
-jamfpro_instance_fqdn     = "https://yourcompany.jamfcloud.com"
-jamfpro_auth_method       = "oauth2"  # or "basic"
-jamfpro_client_id         = "your-jamfpro-client-id"
-jamfpro_client_secret     = "your-jamfpro-client-secret"
+jamfplatform_base_url      = "https://us.apigw.jamf.com"  # or eu.apigw.jamf.com, apac.apigw.jamf.com
+jamfplatform_client_id     = "your-jamfplatform-client-id"
+jamfplatform_client_secret = "your-jamfplatform-client-secret"
 ```
 
 **⚠️ Security Note**: Never commit `terraform.tfvars` to version control. It's already included in `.gitignore`.
 
-### Dual Provider Architecture
+### Jamf Platform Provider
 
-This repository demonstrates using both providers together:
+This repository demonstrates using the Jamf Platform provider for complete device management:
 
-- **`jamfplatform` provider** - For compliance benchmarks, blueprints, and platform-level resources
-- **`jamfpro` provider** - For creating and managing Jamf Pro groups, then sourcing their Platform IDs
+- **Device Groups** - Create and manage smart/static device groups natively
+- **Compliance Benchmarks** - Configure security baselines (CIS, NIST 800-53)
+- **Blueprints** - Manage device configurations and policies
+- **Data Sources** - Query baselines, rules, and device groups
 
-### Group Platform ID Sourcing
+### Device Group Management
 
-The `main.tf` shows how to create a Jamf Pro group and automatically get its Platform ID:
+The `main.tf` shows how to create a smart computer group directly in Jamf Platform:
 
 ```hcl
-# Create a group in Jamf Pro
-resource "jamfpro_smart_computer_group" "demo_target_group" {
-  name = "Jamf Platform Demo Target Group"
+# Create a smart computer group
+resource "jamfplatform_device_group" "demo_computer_group" {
+  name        = "Jamf Platform Demo Target Group"
+  group_type  = "smart"
+  device_type = "computer"
+  criteria {
+    criteria = "Operating System Version"
+    operator = "greater than or equal"
+    value    = "26.0"
+  }
 }
 
-# Get the Platform ID for use with jamfplatform resources
-data "jamfpro_group" "demo_target_group" {
-  group_jamfpro_id = jamfpro_smart_computer_group.demo_target_group.id
-  group_type       = "COMPUTER"
-}
-
-# Use the Platform ID in jamfplatform resources
+# Use the group in benchmarks and blueprints
 resource "jamfplatform_cbengine_benchmark" "example" {
   # ... other configuration ...
-  target_device_groups = [data.jamfpro_group.demo_target_group.group_platform_id]
+  target_device_group = jamfplatform_device_group.demo_computer_group.id
 }
 ```
 
@@ -90,8 +87,8 @@ resource "jamfplatform_cbengine_benchmark" "example" {
 
 ```
 terraform-jamfplatform-examples/
-├── main.tf                    # Main configuration for you to edit as required
-├── provider.tf               # Provider configurations for both jamfplatform and jamfpro
+├── main.tf                    # Main configuration with demo device group
+├── provider.tf               # Jamf Platform provider configuration
 ├── variables.tf              # Variable definitions
 ├── terraform.tfvars         # Your local variable configuration (not in git)
 ├── examples/
@@ -99,7 +96,8 @@ terraform-jamfplatform-examples/
 │   │   └── benchmarks/
 │   │       └── all_baselines_all_rules.tf  # Export all benchmarks to CSV
 │   └── resources/
-│       └── (resource examples)
+│       ├── benchmarks/      # Compliance benchmark examples
+│       └── blueprints/      # Device configuration examples
 └── README.md
 ```
 
@@ -112,13 +110,34 @@ terraform-jamfplatform-examples/
   - Exports comprehensive data to CSV format including ODV fields
   - Demonstrates `jamfplatform_cbengine_baselines` and `jamfplatform_cbengine_rules` data sources
 
+### Resources
+
+#### Benchmarks (`examples/resources/benchmarks/`)
+
+- **CIS Level 1 & 2** - Complete compliance benchmarks with all rules
+- **NIST 800-53 Rev 5** - Low, Moderate, and High security baselines
+- **Custom Rules with ODV** - Demonstrates customizing rules with organization-defined values
+
+#### Blueprints (`examples/resources/blueprints/`)
+
+- **Software Update** - Manual targeted updates and automatic deployment
+- **Software Update Settings** - Beta programs, deferrals, and update cadence
+- **Passcode Policy** - Password complexity and security requirements
+- **Safari Settings** - Browser configuration and restrictions
+- **Safari Bookmarks & Extensions** - Managed bookmarks and extension policies
+- **Disk Management** - External and network storage controls
+- **Audio Accessory Settings** - Bluetooth audio device management
+- **Math Settings** - Calculator and math notes configuration
+- **Service Background Tasks** - Custom background services and daemons
+- **Service Configuration Files** - System service configurations (SSH, PAM)
+
 ### Main Configuration
 
 The root `main.tf` includes:
 
-- **Dual Provider Setup** - Shows how to configure both `jamfplatform` and `jamfpro` providers
-- **Smart Computer Group Creation** - Creates a demo target group in Jamf Pro
-- **Platform ID Resolution** - Uses the `jamfpro_group` data source to get the Platform ID
+- **Jamf Platform Provider Setup** - Single provider configuration
+- **Smart Computer Group Creation** - Creates a demo target group with OS version criteria
+- **Ready for Extension** - Playground for testing resource and data source examples
 
 ## 🛠 Usage
 
@@ -144,11 +163,6 @@ The root `main.tf` includes:
    jamfplatform_base_url      = "https://us.apigw.jamf.com"
    jamfplatform_client_id     = "your-platform-client-id"
    jamfplatform_client_secret = "your-platform-client-secret"
-   
-   jamfpro_instance_fqdn      = "https://yourcompany.jamfcloud.com"
-   jamfpro_auth_method        = "oauth2"
-   jamfpro_client_id          = "your-jamfpro-client-id"
-   jamfpro_client_secret      = "your-jamfpro-client-secret"
    ```
 
 3. **Initialize and run**
@@ -163,68 +177,68 @@ The root `main.tf` includes:
 
 The main configuration will:
 
-- Create a smart computer group in Jamf Pro called "Jamf Platform Demo Target Group"
-- Resolve the group's Platform ID using the `jamfpro_group` data source
-- Create resources and read from any data sources you've added and adjusted from the examples
+- Create a smart computer group in Jamf Platform called "Jamf Platform Demo Target Group"
+- Target devices running macOS 26.0 or higher
+- Provide a foundation for testing benchmark and blueprint configurations from the examples
 
 ### Extending the Configuration
 
-Add your own resources to `main.tf` below the comment line:
+Copy examples from `examples/resources/` and add them to `main.tf`:
 
 ```hcl
 # Add data source and resource blocks below this line as required
 
-# Your custom resources here
-resource "jamfplatform_cbengine_benchmark" "my_benchmark" {
-  # Configuration...
+# Example: Add a CIS Level 1 benchmark
+data "jamfplatform_cbengine_rules" "cis_lvl1" {
+  baseline_id = "cis_lvl1"
+}
+
+resource "jamfplatform_cbengine_benchmark" "my_cis_benchmark" {
+  title              = "My CIS Benchmark"
+  description        = "Managed by Terraform"
+  source_baseline_id = "cis_lvl1"
+  
+  sources = [
+    for s in data.jamfplatform_cbengine_rules.cis_lvl1.sources : {
+      branch   = s.branch
+      revision = s.revision
+    }
+  ]
+  
+  rules = [
+    for r in data.jamfplatform_cbengine_rules.cis_lvl1.rules : {
+      id      = r.id
+      enabled = r.enabled
+    }
+  ]
+  
+  target_device_group = jamfplatform_device_group.demo_computer_group.id
+  enforcement_mode    = "MONITOR"
 }
 ```
 
 ## � Provider Documentation
 
-This repository uses two Terraform providers:
+This repository uses the Jamf Platform Terraform provider:
 
 ### Jamf Platform Provider (`Jamf-Concepts/jamfplatform`)
 
-- **Purpose**: Manage Jamf Platform resources like compliance benchmarks and blueprints
-- **Version**: 0.1.2
+- **Purpose**: Manage Jamf Platform resources including device groups, compliance benchmarks, and blueprints
+- **Version**: >= 0.5.0
 - **Authentication**: OAuth2 client credentials
 - **Documentation**: [Terraform Registry](https://registry.terraform.io/providers/Jamf-Concepts/jamfplatform/latest/docs)
 
 **Key Resources:**
 
-- `jamfplatform_cbengine_benchmark` - Compliance benchmarks
-- `jamfplatform_blueprints_blueprint` - Device management blueprints
+- `jamfplatform_device_group` - Smart and static device groups for computers and mobile devices
+- `jamfplatform_cbengine_benchmark` - Compliance benchmarks (CIS, NIST 800-53)
+- `jamfplatform_blueprints_blueprint` - Device configuration blueprints
 
 **Key Data Sources:**
 
 - `jamfplatform_cbengine_baselines` - Available compliance baselines
 - `jamfplatform_cbengine_rules` - Rules for specific baselines
-
-### Jamf Pro Provider (`deploymenttheory/jamfpro`)
-
-- **Purpose**: Manage traditional Jamf Classic and Pro API resources like computer groups, policies, etc.
-- **Version**: 0.26.0  
-- **Authentication**: OAuth2 client credentials
-- **Documentation**: [Terraform Registry](https://registry.terraform.io/providers/deploymenttheory/jamfpro/latest/docs)
-
-**Key Resources:**
-
-- `jamfpro_smart_computer_group` - Smart computer groups
-
-**Key Data Sources:**
-
-- `jamfpro_group` - Group information including Platform ID resolution
-
-## 🔄 Platform ID Resolution
-
-A key feature demonstrated in this repository is how to bridge between Jamf Pro and Jamf Platform resources:
-
-1. **Create a group in Jamf Pro** using the `jamfpro` provider
-2. **Get the Platform ID** using the `jamfpro_group` data source
-3. **Use the Platform ID** in `jamfplatform` resources for targeting
-
-This pattern is essential because Jamf Platform resources reference groups by their Platform UUID, not their traditional Jamf Pro ID.
+- `jamfplatform_device_groups` - Query existing device groups
 
 ## 🔄 GitHub Workflows
 
@@ -247,29 +261,26 @@ This repository includes GitHub Actions workflows for automated Terraform operat
 If using the GitHub workflows, configure these repository secrets for sensitive credentials:
 
 - `jamfplatform_client_id` - Your Jamf Platform API client ID
-- `jamfplatform_client_secret` - Your Jamf Platform API client secret  
-- `jamfpro_client_id` - Your Jamf Pro API client ID
-- `jamfpro_client_secret` - Your Jamf Pro API client secret
+- `jamfplatform_client_secret` - Your Jamf Platform API client secret
 
 ### Required Repository Variables
 
 Configure these repository variables for non-sensitive configuration values:
 
 - `JAMFPLATFORM_BASE_URL` - Your Jamf Platform API base URL (e.g., `https://us.apigw.jamf.com`)
-- `JAMFPRO_INSTANCE_FQDN` - Your Jamf Pro instance FQDN (e.g., `https://yourcompany.jamfcloud.com`)
-- `JAMFPRO_AUTH_METHOD` - Authentication method for Jamf Pro (e.g., `oauth2`)
 
 ### Setting Up GitHub Repository Configuration
 
 1. **Repository Secrets** (Settings → Secrets and variables → Actions → Secrets):
-   - Add each secret with its corresponding API credential value
+   - Add `jamfplatform_client_id` with your Jamf Platform client ID
+   - Add `jamfplatform_client_secret` with your Jamf Platform client secret
    - These are encrypted and only available during workflow execution
 
 2. **Repository Variables** (Settings → Secrets and variables → Actions → Variables):
-   - Add each variable with its corresponding configuration value
-   - These are visible in the repository but not sensitive
+   - Add `JAMFPLATFORM_BASE_URL` with your Jamf Platform API endpoint
+   - This is visible in the repository but not sensitive
 
-**Note**: The workflows are configured to use all secrets and variables listed above, providing complete automation support for both Jamf Platform and Jamf Pro resources.
+**Note**: The workflows are configured to use these secrets and variables for complete automation support.
 
 ## 🗄️ State Management
 
