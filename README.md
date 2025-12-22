@@ -85,7 +85,7 @@ resource "jamfplatform_cbengine_benchmark" "example" {
 }
 ```
 
-## � Repository Structure
+## 📁 Repository Structure
 
 ```
 terraform-jamfplatform-examples/
@@ -219,7 +219,7 @@ resource "jamfplatform_cbengine_benchmark" "my_cis_benchmark" {
 }
 ```
 
-## � Provider Documentation
+## 📚 Provider Documentation
 
 This repository uses the Jamf Platform Terraform provider:
 
