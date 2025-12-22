@@ -2,6 +2,8 @@
 
 Example Terraform configurations demonstrating how to use the Jamf Platform Terraform provider for managing Jamf Pro resources, compliance benchmarks, and device groups.
 
+> This resource is provided by the community and is not officially endorsed or supported by Jamf.
+
 ## 🚀 Quick Start
 
 1. **Clone this repository**
