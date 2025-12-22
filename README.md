@@ -37,6 +37,8 @@ Example Terraform configurations demonstrating how to use the Jamf Platform Terr
 
 This repository uses a local `terraform.tfvars` file for authentication. You need to create your own `terraform.tfvars` file with your Jamf Platform API credentials.
 
+Follow the [Getting Started](https://developer.jamf.com/platform-api/reference/getting-started-with-platform-api) guide to generate your credentials.
+
 **Required Variables:**
 
 Create a `terraform.tfvars` file in the root directory:
