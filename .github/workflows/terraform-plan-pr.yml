@@ -1,5 +1,9 @@
 name: "Terraform Plan (PR)"
 
+permissions:
+  contents: read
+  actions: write
+
 on:
   pull_request:
     branches:
@@ -33,7 +37,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.13.3"
+          terraform_version: "latest"
           terraform_wrapper: false
 
       - name: Init
@@ -49,8 +53,4 @@ jobs:
           TF_VAR_jamfplatform_base_url: ${{ vars.JAMFPLATFORM_BASE_URL }}
           TF_VAR_jamfplatform_client_id: ${{ secrets.jamfplatform_client_id }}
           TF_VAR_jamfplatform_client_secret: ${{ secrets.jamfplatform_client_secret }}
-          TF_VAR_jamfpro_instance_fqdn: ${{ vars.JAMFPRO_INSTANCE_FQDN }}
-          TF_VAR_jamfpro_auth_method: ${{ vars.JAMFPRO_AUTH_METHOD }}
-          TF_VAR_jamfpro_client_id: ${{ secrets.jamfpro_client_id }}
-          TF_VAR_jamfpro_client_secret: ${{ secrets.jamfpro_client_secret }}
         run: terraform plan
