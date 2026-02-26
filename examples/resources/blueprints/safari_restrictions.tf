@@ -1,8 +1,8 @@
 # Legacy Restrictions Payload with Safari-specific restrictions
 resource "jamfplatform_blueprints_blueprint" "legacy_payload_restrictions_safari" {
-  name        = "Restrictions - Safari"
-  description = "Managed by Terraform"
-
+  name          = "Restrictions - Safari"
+  description   = "Managed by Terraform"
+  deployed      = false
   device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
   legacy_payloads = jsonencode([

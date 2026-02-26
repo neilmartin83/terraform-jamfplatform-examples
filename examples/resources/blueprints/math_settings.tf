@@ -2,10 +2,11 @@
 resource "jamfplatform_blueprints_blueprint" "math_settings" {
   name        = "Math Settings"
   description = "Managed by Terraform"
+  deployed    = false
 
   device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
-  math_settings {
+  math_settings = {
     calculator_basic_mode_add_square_root  = true
     calculator_scientific_mode_enabled     = true
     calculator_programmer_mode_enabled     = false

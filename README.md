@@ -4,7 +4,7 @@ Example Terraform configurations demonstrating how to use the Jamf Platform Terr
 
 > This resource is provided by the community and is not officially endorsed or supported by Jamf.
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone this repository**
 
@@ -33,7 +33,7 @@ Example Terraform configurations demonstrating how to use the Jamf Platform Terr
    terraform apply
    ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Authentication
 
@@ -52,7 +52,7 @@ jamfplatform_client_id     = "your-jamfplatform-client-id"
 jamfplatform_client_secret = "your-jamfplatform-client-secret"
 ```
 
-**⚠️ Security Note**: Never commit `terraform.tfvars` to version control. It's already included in `.gitignore`.
+**Security Note**: Never commit `terraform.tfvars` to version control. It's already included in `.gitignore`.
 
 ### Jamf Platform Provider
 
@@ -73,11 +73,13 @@ resource "jamfplatform_device_group" "demo_computer_group" {
   name        = "Jamf Platform Demo Target Group"
   group_type  = "smart"
   device_type = "computer"
-  criteria {
-    criteria = "Operating System Version"
-    operator = "greater than or equal"
-    value    = "26.0"
-  }
+  criteria = [
+    {
+      criteria = "Operating System Version"
+      operator = "greater than or equal"
+      value    = "26.0"
+    }
+  ]
 }
 
 # Use the group in benchmarks and blueprints
@@ -87,29 +89,30 @@ resource "jamfplatform_cbengine_benchmark" "example" {
 }
 ```
 
-## 📁 Repository Structure
+## Repository Structure
 
-```
+```bash
 terraform-jamfplatform-examples/
 ├── main.tf                    # Main configuration with demo device group
 ├── provider.tf               # Jamf Platform provider configuration
 ├── variables.tf              # Variable definitions
-├── terraform.tfvars         # Your local variable configuration (not in git)
+├── terraform.tfvars          # Your local variable configuration (not in git)
+├── terraform.tfvars.example  # Example variables file
 ├── examples/
 │   ├── data_sources/
 │   │   └── benchmarks/
-│   │       └── all_baselines_all_rules.tf  # Export all benchmarks to CSV
+│   │       └── all_baselines_all_rules_csv.tf  # Export all benchmarks to CSV
 │   └── resources/
-│       ├── benchmarks/      # Compliance benchmark examples
-│       └── blueprints/      # Device configuration examples
+│       ├── benchmarks/       # Compliance benchmark examples
+│       └── blueprints/       # Device configuration examples
 └── README.md
 ```
 
-## 📊 Current Examples
+## Current Examples
 
 ### Data Sources
 
-- **All Baselines and Rules** (`examples/data_sources/benchmarks/all_baselines_all_rules.tf`)
+- **All Baselines and Rules** (`examples/data_sources/benchmarks/all_baselines_all_rules_csv.tf`)
   - Fetches all available compliance baselines and their rules
   - Exports comprehensive data to CSV format including ODV fields
   - Demonstrates `jamfplatform_cbengine_baselines` and `jamfplatform_cbengine_rules` data sources
@@ -127,8 +130,10 @@ terraform-jamfplatform-examples/
 - **Software Update** - Manual targeted updates and automatic deployment
 - **Software Update Settings** - Beta programs, deferrals, and update cadence
 - **Passcode Policy** - Password complexity and security requirements
-- **Safari Settings** - Browser configuration and restrictions
-- **Safari Bookmarks & Extensions** - Managed bookmarks and extension policies
+- **Safari Settings** - Browser configuration
+- **Safari Bookmarks** - Managed bookmarks with folders and nested structures
+- **Safari Extensions** - Extension management and domain policies
+- **Safari Restrictions** - Legacy payload restrictions for Safari
 - **Disk Management** - External and network storage controls
 - **Audio Accessory Settings** - Bluetooth audio device management
 - **Math Settings** - Calculator and math notes configuration
@@ -139,11 +144,11 @@ terraform-jamfplatform-examples/
 
 The root `main.tf` includes:
 
-- **Jamf Platform Provider Setup** - Single provider configuration
+- **Required Provider Declaration** - Jamf Platform provider source and version constraint
 - **Smart Computer Group Creation** - Creates a demo target group with OS version criteria
 - **Ready for Extension** - Playground for testing resource and data source examples
 
-## 🛠 Usage
+## Usage
 
 ### Getting Started
 
@@ -221,14 +226,14 @@ resource "jamfplatform_cbengine_benchmark" "my_cis_benchmark" {
 }
 ```
 
-## 📚 Provider Documentation
+## Provider Documentation
 
 This repository uses the Jamf Platform Terraform provider:
 
 ### Jamf Platform Provider (`Jamf-Concepts/jamfplatform`)
 
 - **Purpose**: Manage Jamf Platform resources including device groups, compliance benchmarks, and blueprints
-- **Version**: >= 0.5.0
+- **Version**: >= 0.13.0
 - **Authentication**: OAuth2 client credentials
 - **Documentation**: [Terraform Registry](https://registry.terraform.io/providers/Jamf-Concepts/jamfplatform/latest/docs)
 
@@ -244,7 +249,7 @@ This repository uses the Jamf Platform Terraform provider:
 - `jamfplatform_cbengine_rules` - Rules for specific baselines
 - `jamfplatform_device_groups` - Query existing device groups
 
-## 🔄 GitHub Workflows
+## GitHub Workflows
 
 This repository includes GitHub Actions workflows for automated Terraform operations:
 
@@ -255,7 +260,7 @@ This repository includes GitHub Actions workflows for automated Terraform operat
 
 ### Workflow Features
 
-- **Validation**: Automatic `terraform fmt`, `terraform validate`, and `terraform plan` on PRs
+- **Validation**: Automatic `terraform validate` and `terraform plan` on PRs
 - **Security**: Uses GitHub repository secrets for API credentials
 - **Automation**: Applies changes automatically on merge to main branch
 - **Rollback**: Includes automatic rollback (destroy) capabilities on deployment failures
@@ -286,9 +291,9 @@ Configure these repository variables for non-sensitive configuration values:
 
 **Note**: The workflows are configured to use these secrets and variables for complete automation support.
 
-## 🗄️ State Management
+## State Management
 
-**⚠️ State Management Warning**
+### State Management Warning
 
 This repository uses **local state files** for simplicity and test/demonstration purposes. The included GitHub workflows use **GitHub Actions caching** for state management, which has significant limitations:
 

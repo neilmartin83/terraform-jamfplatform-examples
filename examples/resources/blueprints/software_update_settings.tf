@@ -2,10 +2,11 @@
 resource "jamfplatform_blueprints_blueprint" "software_update_settings" {
   name        = "Software Update Settings"
   description = "Managed by Terraform"
+  deployed    = false
 
   device_groups = [jamfplatform_device_group.demo_computer_group.id]
 
-  software_update_settings {
+  software_update_settings = {
     allow_standard_user_os_updates           = true
     automatic_download                       = "AlwaysOn"
     automatic_install_os_updates             = "AlwaysOn"
@@ -20,14 +21,15 @@ resource "jamfplatform_blueprints_blueprint" "software_update_settings" {
     rapid_security_response_rollback_enabled = false
     recommended_cadence                      = "Newest"
 
-    beta_offer_programs {
-      token       = "beta-token-1"
-      description = "iOS 18 Beta Program"
-    }
-
-    beta_offer_programs {
-      token       = "beta-token-2"
-      description = "macOS Sequoia Beta Program"
-    }
+    beta_offer_programs = [
+      {
+        token       = "beta-token-1"
+        description = "iOS 18 Beta Program"
+      },
+      {
+        token       = "beta-token-2"
+        description = "macOS Sequoia Beta Program"
+      }
+    ]
   }
 }
